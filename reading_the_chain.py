@@ -61,21 +61,22 @@ def is_ordered_block(w3, block_num):
 	txs = block['transactions']
 	if not txs:
 		return ordered
-	fees = []
 	base_fee = block.get('baseFeePerGas')
+	fees = []
+
 	for tx in txs:
-		tx_type = tx.get('type', 0) 
 		if base_fee is None:
-			fee = tx.get('gasPrice', 0)
+			fee = tx['gasPrice']
 		else:
+			tx_type = tx.get('type', 0)
 			if tx_type == 2:
 				fee = min(tx.get('maxPriorityFeePerGas', 0),
-						  tx.get('maxFeePerGas', 0) - base_fee)
+                          tx.get('maxFeePerGas', 0) - base_fee)
 			else:
-				fee = tx.get('gasPrice', 0) - base_fee
+				fee = tx['gasPrice'] - base_fee
 		fees.append(fee)
 	ordered = all(fees[i] >= fees[i+1] for i in range(len(fees)-1))
-	return ordered
+	return 
 
 
 def get_contract_values(contract, admin_address, owner_address):
@@ -97,8 +98,9 @@ def get_contract_values(contract, admin_address, owner_address):
 	# TODO complete the following lines by performing contract calls
 	onchain_root = contract.functions.merkleRoot().call()
 	has_role = contract.functions.hasRole(default_admin_role, admin_address).call()
-	prime = contract.functions.prime(owner_address).call()
+	prime = contract.functions.getPrimeByOwner(owner_address).call()
 	return onchain_root, has_role, prime
+
 
 
 """
