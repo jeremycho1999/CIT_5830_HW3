@@ -76,7 +76,7 @@ def is_ordered_block(w3, block_num):
 				fee = tx['gasPrice'] - base_fee
 		fees.append(fee)
 	ordered = all(fees[i] >= fees[i+1] for i in range(len(fees)-1))
-	return 
+	return ordered
 
 
 def get_contract_values(contract, admin_address, owner_address):
